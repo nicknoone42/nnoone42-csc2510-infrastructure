@@ -1,15 +1,35 @@
 ---
-- hosts: all 
-  become: yes
+- hosts: all
+  become: yes  # Necessary to install packages and restart services
   become_method: sudo
-
   tasks:
-    - name: Install python-apt package
-      package:
-        name: python-apt
-        state: present
+    # Copy apache.conf to the server
+    - name: Copy apache.conf to the server
+      copy:
+        src: files/config/config/apache2.conf  # Updated path
+        dest: /etc/apache2/apache2.conf
+        owner: root
+        group: root
+        mode: '0644'
 
-    - name: Install apache2 package
-      package:
+    # Copy index.html to the server
+    - name: Copy index.html to the server
+      copy:
+        src: files/site/index.html
+        dest: /var/www/html/index.html
+        owner: www-data
+        group: www-data
+        mode: '0644'
+
+    # Create symbolic link for apache2.conf
+    - name: Create symbolic link for apache2.conf
+      file:
+        src: /etc/apache2/apache2.conf
+        dest: /etc/apache2/sites-enabled/000-default.conf
+        state: link
+
+    # Restart apache2 service
+    - name: Restart apache2 service
+      service:
         name: apache2
-        state: present
+        state: restarted
