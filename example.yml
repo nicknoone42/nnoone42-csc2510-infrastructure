@@ -1,0 +1,15 @@
+---
+- hosts: all 
+  become: yes
+  become_method: sudo
+
+  tasks:
+    - name: Install python-apt package
+      package:
+        name: python-apt
+        state: present
+
+    - name: Install apache2 package
+      package:
+        name: apache2
+        state: present
